@@ -1,4 +1,5 @@
 import {
+    useCallback,
     useState,
 } from "react";
 
@@ -61,49 +62,56 @@ export const useSearchHistory =
 
 
         const addToHistory =
-            (
-                city: string,
-            ): void => {
-                const normalizedCity =
-                    city.trim();
+            useCallback(
+                (
+                    city: string,
+                ): void => {
+                    const normalizedCity =
+                        city.trim();
 
-                if (!normalizedCity) {
-                    return;
-                }
+                    if (
+                        !normalizedCity
+                    ) {
+                        return;
+                    }
 
-                setHistory(
-                    (
-                        currentHistory,
-                    ) => {
-                        const filteredHistory =
-                            currentHistory.filter(
-                                (
-                                    item,
-                                ) =>
-                                    item.toLowerCase() !==
-                                    normalizedCity.toLowerCase(),
+                    setHistory(
+                        (
+                            currentHistory,
+                        ) => {
+                            const filteredHistory =
+                                currentHistory.filter(
+                                    (
+                                        item,
+                                    ) =>
+                                        item
+                                            .toLowerCase() !==
+                                        normalizedCity
+                                            .toLowerCase(),
+                                );
+
+                            const updatedHistory =
+                                [
+                                    normalizedCity,
+                                    ...filteredHistory,
+                                ].slice(
+                                    0,
+                                    MAX_HISTORY_ITEMS,
+                                );
+
+                            localStorage.setItem(
+                                STORAGE_KEY,
+                                JSON.stringify(
+                                    updatedHistory,
+                                ),
                             );
 
-                        const updatedHistory =
-                            [
-                                normalizedCity,
-                                ...filteredHistory,
-                            ].slice(
-                                0,
-                                MAX_HISTORY_ITEMS,
-                            );
-
-                        localStorage.setItem(
-                            STORAGE_KEY,
-                            JSON.stringify(
-                                updatedHistory,
-                            ),
-                        );
-
-                        return updatedHistory;
-                    },
-                );
-            };
+                            return updatedHistory;
+                        },
+                    );
+                },
+                [],
+            );
 
 
         return {
