@@ -1,113 +1,54 @@
 import "./App.css";
 
 import {
-    SearchForm,
-} from "./components/SearchForm";
+    Route,
+    Routes,
+} from "react-router-dom";
 
 import {
-    WeatherCard,
-} from "./components/WeatherCard";
+    Navigation,
+} from "./components/Navigation";
 
 import {
-    HistoryList,
-} from "./components/HistoryList";
+    HomePage,
+} from "./pages/HomePage";
 
 import {
-    useWeather,
-} from "./hooks/useWeather";
+    CityPage,
+} from "./pages/CityPage";
 
 import {
-    useSearchHistory,
-} from "./hooks/useSearchHistory";
+    AboutPage,
+} from "./pages/AboutPage";
 
 
 function App() {
-    const {
-        weatherData,
-        isLoading,
-        error,
-        searchWeather,
-    } = useWeather();
-
-    const {
-        history,
-        addToHistory,
-    } = useSearchHistory();
-
-
-    const handleSearch =
-        async (
-            city: string,
-        ): Promise<void> => {
-            const isSuccess =
-                await searchWeather(
-                    city,
-                );
-
-            if (isSuccess) {
-                addToHistory(
-                    city,
-                );
-            }
-        };
-
-
     return (
         <main className="app">
-            <header className="app-header">
-                <div>
-                    <p className="app-label">
-                        WEATHER
-                    </p>
+            <Navigation />
 
-                    <h1>
-                        Погода сейчас
-                    </h1>
-
-                    <p className="app-subtitle">
-                        Узнайте текущую погоду
-                        в любом городе
-                    </p>
-                </div>
-
-                <div className="sun-icon">
-                    ☀️
-                </div>
-            </header>
-
-            <div className="search-card">
-                <SearchForm
-                    onSearch={
-                        handleSearch
-                    }
-                    isLoading={
-                        isLoading
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        <HomePage />
                     }
                 />
-            </div>
 
-            {error && (
-                <p className="error-message">
-                    {error}
-                </p>
-            )}
-
-            {weatherData && (
-                <WeatherCard
-                    data={
-                        weatherData
+                <Route
+                    path="/city/:cityName"
+                    element={
+                        <CityPage />
                     }
                 />
-            )}
 
-            <HistoryList
-                history={
-                    history
-                }
-                onSelect={
-                    handleSearch
-                }
-            />
+                <Route
+                    path="/about"
+                    element={
+                        <AboutPage />
+                    }
+                />
+            </Routes>
         </main>
     );
 }

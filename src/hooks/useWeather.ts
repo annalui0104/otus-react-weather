@@ -1,4 +1,5 @@
 import {
+    useCallback,
     useState,
 } from "react";
 
@@ -57,53 +58,65 @@ export const useWeather =
 
 
         const searchWeather =
-            async (
-                city: string,
-            ): Promise<boolean> => {
-                const normalizedCity =
-                    city.trim();
+            useCallback(
+                async (
+                    city: string,
+                ): Promise<boolean> => {
+                    const normalizedCity =
+                        city.trim();
 
-                if (!normalizedCity) {
-                    return false;
-                }
-
-                setIsLoading(true);
-                setError(null);
-
-                try {
-                    const result =
-                        await getWeatherByCity(
-                            normalizedCity,
-                        );
-
-                    setWeatherData(
-                        result,
-                    );
-
-                    return true;
-                } catch (
-                    caughtError
+                    if (
+                        !normalizedCity
                     ) {
-                    const message =
-                        caughtError instanceof Error
-                            ? caughtError.message
-                            : "Неизвестная ошибка";
+                        return false;
+                    }
+
+                    setIsLoading(
+                        true,
+                    );
 
                     setError(
-                        message,
-                    );
-
-                    setWeatherData(
                         null,
                     );
 
-                    return false;
-                } finally {
-                    setIsLoading(
-                        false,
-                    );
-                }
-            };
+                    try {
+                        const result =
+                            await getWeatherByCity(
+                                normalizedCity,
+                            );
+
+                        setWeatherData(
+                            result,
+                        );
+
+                        return true;
+                    } catch (
+                        caughtError
+                        ) {
+                        const message =
+                            caughtError
+                            instanceof Error
+                                ? caughtError
+                                    .message
+                                : "Неизвестная ошибка";
+
+                        setError(
+                            message,
+                        );
+
+                        setWeatherData(
+                            null,
+                        );
+
+                        return false;
+                    } finally {
+                        setIsLoading(
+                            false,
+                        );
+                    }
+                },
+                [],
+            );
 
 
         return {
